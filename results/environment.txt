@@ -1,0 +1,8 @@
+cpu_model=Intel(R) Core(TM) i5-10300H CPU @ 2.50GHz
+operating_system=Linux 6.8.0-139-generic
+mpi=mpirun (Open MPI) 4.1.6
+compiler=13.3.0
+cxx_standard=17
+detected_hardware_threads=8
+workers=1,2,4,8
+repeats=3

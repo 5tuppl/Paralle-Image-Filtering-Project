@@ -1,0 +1,5 @@
+build/
+bin/
+data/*.ppm
+tests/input_*.ppm
+tests/output_*.ppm

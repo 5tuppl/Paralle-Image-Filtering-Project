@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="560" viewBox="0 0 900 560">
+<rect width="900" height="560" fill="white"/>
+<text x="450" y="35" text-anchor="middle" font-family="sans-serif" font-size="22" font-weight="bold">Strong scaling: fixed image size</text>
+<line x1="95.00" y1="475.00" x2="865.00" y2="475.00" stroke="#dddddd" stroke-width="1"/>
+<text x="85.00" y="480.00" text-anchor="end" font-family="sans-serif" font-size="13">0.00</text>
+<line x1="95.00" y1="394.00" x2="865.00" y2="394.00" stroke="#dddddd" stroke-width="1"/>
+<text x="85.00" y="399.00" text-anchor="end" font-family="sans-serif" font-size="13">0.10</text>
+<line x1="95.00" y1="313.00" x2="865.00" y2="313.00" stroke="#dddddd" stroke-width="1"/>
+<text x="85.00" y="318.00" text-anchor="end" font-family="sans-serif" font-size="13">0.19</text>
+<line x1="95.00" y1="232.00" x2="865.00" y2="232.00" stroke="#dddddd" stroke-width="1"/>
+<text x="85.00" y="237.00" text-anchor="end" font-family="sans-serif" font-size="13">0.29</text>
+<line x1="95.00" y1="151.00" x2="865.00" y2="151.00" stroke="#dddddd" stroke-width="1"/>
+<text x="85.00" y="156.00" text-anchor="end" font-family="sans-serif" font-size="13">0.39</text>
+<line x1="95.00" y1="70.00" x2="865.00" y2="70.00" stroke="#dddddd" stroke-width="1"/>
+<text x="85.00" y="75.00" text-anchor="end" font-family="sans-serif" font-size="13">0.48</text>
+<line x1="95.00" y1="70.00" x2="95.00" y2="475.00" stroke="#eeeeee" stroke-width="1"/>
+<text x="95.00" y="500.00" text-anchor="middle" font-family="sans-serif" font-size="13">1</text>
+<line x1="205.00" y1="70.00" x2="205.00" y2="475.00" stroke="#eeeeee" stroke-width="1"/>
+<text x="205.00" y="500.00" text-anchor="middle" font-family="sans-serif" font-size="13">2</text>
+<line x1="425.00" y1="70.00" x2="425.00" y2="475.00" stroke="#eeeeee" stroke-width="1"/>
+<text x="425.00" y="500.00" text-anchor="middle" font-family="sans-serif" font-size="13">4</text>
+<line x1="865.00" y1="70.00" x2="865.00" y2="475.00" stroke="#eeeeee" stroke-width="1"/>
+<text x="865.00" y="500.00" text-anchor="middle" font-family="sans-serif" font-size="13">8</text>
+<line x1="95.00" y1="475.00" x2="865.00" y2="475.00" stroke="black" stroke-width="1.5"/>
+<line x1="95.00" y1="70.00" x2="95.00" y2="475.00" stroke="black" stroke-width="1.5"/>
+<polyline fill="none" stroke="#2E86AB" stroke-width="3" points="95.00,216.55 205.00,341.18 425.00,402.82 865.00,406.67 "/>
+<circle cx="95.00" cy="216.55" r="4.5" fill="#2E86AB"/>
+<circle cx="205.00" cy="341.18" r="4.5" fill="#2E86AB"/>
+<circle cx="425.00" cy="402.82" r="4.5" fill="#2E86AB"/>
+<circle cx="865.00" cy="406.67" r="4.5" fill="#2E86AB"/>
+<polyline fill="none" stroke="#E07A5F" stroke-width="3" points="95.00,217.86 205.00,239.37 425.00,113.39 865.00,226.83 "/>
+<circle cx="95.00" cy="217.86" r="4.5" fill="#E07A5F"/>
+<circle cx="205.00" cy="239.37" r="4.5" fill="#E07A5F"/>
+<circle cx="425.00" cy="113.39" r="4.5" fill="#E07A5F"/>
+<circle cx="865.00" cy="226.83" r="4.5" fill="#E07A5F"/>
+<polyline fill="none" stroke="#3D9970" stroke-width="3" points="95.00,218.65 205.00,342.41 425.00,350.58 865.00,276.48 "/>
+<circle cx="95.00" cy="218.65" r="4.5" fill="#3D9970"/>
+<circle cx="205.00" cy="342.41" r="4.5" fill="#3D9970"/>
+<circle cx="425.00" cy="350.58" r="4.5" fill="#3D9970"/>
+<circle cx="865.00" cy="276.48" r="4.5" fill="#3D9970"/>
+<text x="480.00" y="545" text-anchor="middle" font-family="sans-serif" font-size="15">Workers (MPI ranks x threads)</text>
+<text x="20" y="272.50" text-anchor="middle" font-family="sans-serif" font-size="15" transform="rotate(-90 20 272.50)">Time (seconds)</text>
+<line x1="110.00" y1="90.00" x2="135.00" y2="90.00" stroke="#2E86AB" stroke-width="3"/>
+<text x="141.00" y="95.00" font-family="sans-serif" font-size="13">OpenMP</text>
+<line x1="225.00" y1="90.00" x2="250.00" y2="90.00" stroke="#E07A5F" stroke-width="3"/>
+<text x="256.00" y="95.00" font-family="sans-serif" font-size="13">MPI</text>
+<line x1="340.00" y1="90.00" x2="365.00" y2="90.00" stroke="#3D9970" stroke-width="3"/>
+<text x="371.00" y="95.00" font-family="sans-serif" font-size="13">Hybrid</text>
+</svg>
