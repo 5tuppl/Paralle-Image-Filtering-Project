@@ -1,5 +1,34 @@
-build/
-bin/
-data/*.ppm
+# Build products and generated inputs/outputs.
+/build/
+/bin/
+/data/
 tests/input_*.ppm
 tests/output_*.ppm
+tests/generated/
+__pycache__/
+*.pyc
+*.dSYM/
+
+# Machine/editor state and temporary chart workbooks.
+.DS_Store
+.idea/
+.vscode/
+.chart-data-*/
+.env
+.env.*
+
+# Local reference material and presentation exports.
+/pixelz/
+/tiger_style.md
+/presentation/
+
+# Keep curated measurement evidence; new benchmark runs stay local by default.
+/results/*
+!/results/README.md
+!/results/baseline-mac/
+!/results/development-mac/
+!/results/historical-linux/
+!/results/mac-release/
+!/results/demo/
+/results/demo/*
+!/results/demo/README.md

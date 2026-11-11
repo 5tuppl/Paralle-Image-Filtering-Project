@@ -1,0 +1,33 @@
+{
+  "utc_time": "2026-11-11T09:04:28.542491+00:00",
+  "platform": "macOS-27.0.1-arm64-arm-64bit",
+  "cpu": "Apple M5 Pro",
+  "logical_cpus": 15,
+  "physical_cpus": "15",
+  "cpu_topology": "hw.perflevel0.physicalcpu: 5\nhw.perflevel1.physicalcpu: 10",
+  "mpi": "mpirun (Open MPI) 5.0.11\n\nReport bugs to https://www.open-mpi.org/community/help/",
+  "compiler": "Apple clang version 21.0.0 (clang-2100.1.1.101)\nTarget: arm64-apple-darwin27.0.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin",
+  "build_commands": "mkdir -p build/release\nmpic++ -Iinclude -Ithird_party/stb -DOMPI_SKIP_MPICXX=1 -DMPICH_SKIP_MPICXX=1 -std=c++17 -Wall -Wextra -Wpedantic -Wshadow -Wconversion -Xpreprocessor -fopenmp -I/opt/homebrew/opt/libomp/include -O3 -MMD -MP -c src/main.cpp -o build/release/main.o\nmpic++ -Iinclude -Ithird_party/stb -DOMPI_SKIP_MPICXX=1 -DMPICH_SKIP_MPICXX=1 -std=c++17 -Wall -Wextra -Wpedantic -Wshadow -Wconversion -Xpreprocessor -fopenmp -I/opt/homebrew/opt/libomp/include -O3 -MMD -MP -c src/image.cpp -o build/release/image.o\nmpic++ -Iinclude -Ithird_party/stb -DOMPI_SKIP_MPICXX=1 -DMPICH_SKIP_MPICXX=1 -std=c++17 -Xpreprocessor -fopenmp -I/opt/homebrew/opt/libomp/include -O3 -w -MMD -MP -c src/codecs.cpp -o build/release/codecs.o\nmpic++ -Iinclude -Ithird_party/stb -DOMPI_SKIP_MPICXX=1 -DMPICH_SKIP_MPICXX=1 -std=c++17 -Wall -Wextra -Wpedantic -Wshadow -Wconversion -Xpreprocessor -fopenmp -I/opt/homebrew/opt/libomp/include -O3 -MMD -MP -c src/filter.cpp -o build/release/filter.o\nmpic++ -Iinclude -Ithird_party/stb -DOMPI_SKIP_MPICXX=1 -DMPICH_SKIP_MPICXX=1 -std=c++17 -Wall -Wextra -Wpedantic -Wshadow -Wconversion -Xpreprocessor -fopenmp -I/opt/homebrew/opt/libomp/include -O3 -MMD -MP -c src/pixel.cpp -o build/release/pixel.o\nmpic++ -Iinclude -Ithird_party/stb -DOMPI_SKIP_MPICXX=1 -DMPICH_SKIP_MPICXX=1 -std=c++17 -Wall -Wextra -Wpedantic -Wshadow -Wconversion -Xpreprocessor -fopenmp -I/opt/homebrew/opt/libomp/include -O3 -MMD -MP -c src/reference.cpp -o build/release/reference.o\nmpic++ -Iinclude -Ithird_party/stb -DOMPI_SKIP_MPICXX=1 -DMPICH_SKIP_MPICXX=1 -std=c++17 -Wall -Wextra -Wpedantic -Wshadow -Wconversion -Xpreprocessor -fopenmp -I/opt/homebrew/opt/libomp/include -O3 -MMD -MP -c src/execution.cpp -o build/release/execution.o\nmpic++ -Iinclude -Ithird_party/stb -DOMPI_SKIP_MPICXX=1 -DMPICH_SKIP_MPICXX=1 -std=c++17 -Wall -Wextra -Wpedantic -Wshadow -Wconversion -Xpreprocessor -fopenmp -I/opt/homebrew/opt/libomp/include -O3 -MMD -MP -c src/options.cpp -o build/release/options.o\nmkdir -p bin/release\nmpic++ build/release/main.o build/release/image.o build/release/codecs.o build/release/filter.o build/release/pixel.o build/release/reference.o build/release/execution.o build/release/options.o -L/opt/homebrew/opt/libomp/lib -Wl,-rpath,/opt/homebrew/opt/libomp/lib -lomp -o bin/release/parallel_filter\nmpic++ -Iinclude -Ithird_party/stb -DOMPI_SKIP_MPICXX=1 -DMPICH_SKIP_MPICXX=1 -std=c++17 -Wall -Wextra -Wpedantic -Wshadow -Wconversion -Xpreprocessor -fopenmp -I/opt/homebrew/opt/libomp/include -O3 -MMD -MP -c src/generate_image.cpp -o build/release/generate_image.o\nmpic++ build/release/generate_image.o build/release/image.o build/release/codecs.o -L/opt/homebrew/opt/libomp/lib -Wl,-rpath,/opt/homebrew/opt/libomp/lib -lomp -o bin/release/generate_image\nmpic++ -Iinclude -Ithird_party/stb -DOMPI_SKIP_MPICXX=1 -DMPICH_SKIP_MPICXX=1 -std=c++17 -Wall -Wextra -Wpedantic -Wshadow -Wconversion -Xpreprocessor -fopenmp -I/opt/homebrew/opt/libomp/include -O3 -MMD -MP -c src/test_unit.cpp -o build/release/test_unit.o\nmpic++ -Iinclude -Ithird_party/stb -DOMPI_SKIP_MPICXX=1 -DMPICH_SKIP_MPICXX=1 -std=c++17 -Wall -Wextra -Wpedantic -Wshadow -Wconversion -Xpreprocessor -fopenmp -I/opt/homebrew/opt/libomp/include -O3 -MMD -MP -c src/allocation_audit.cpp -o build/release/allocation_audit.o\nmpic++ build/release/test_unit.o build/release/allocation_audit.o build/release/image.o build/release/codecs.o build/release/filter.o build/release/pixel.o build/release/reference.o -L/opt/homebrew/opt/libomp/lib -Wl,-rpath,/opt/homebrew/opt/libomp/lib -lomp -o bin/release/test_unit\nmkdir -p bin\nfor name in parallel_filter generate_image test_unit; do ln -sf release/$name bin/$name; done\nln -sf ../scripts/benchmark.py bin/benchmark\nln -sf ../scripts/test_integration.py bin/test_correctness",
+  "git_revision": "095e34def32ac65b0b935b5e21e8805f3fd8beec",
+  "git_status": "M .gitignore\n M Makefile\n M README.md\n M docs/DEFENSE_GUIDE.md\n M docs/PRESENTATION_OUTLINE.md\n M include/filter.h\n M include/image.h\n D results/benchmark.csv\n D results/efficiency.svg\n D results/environment.txt\n D results/speedup.svg\n D results/strong_scaling_time.svg\n D results/weak_scalability.svg\n D src/benchmark.cpp\n M src/filter.cpp\n M src/generate_image.cpp\n M src/image.cpp\n M src/main.cpp\n D src/test_correctness.cpp\n?? docs/DESIGN.md\n?? include/runtime.h\n?? pixelz/\n?? results/baseline-mac/\n?? results/demo/\n?? results/development-mac/\n?? results/historical-linux/\n?? scripts/\n?? src/allocation_audit.cpp\n?? src/codecs.cpp\n?? src/execution.cpp\n?? src/options.cpp\n?? src/pixel.cpp\n?? src/reference.cpp\n?? src/test_unit.cpp\n?? third_party/\n?? tiger_style.md",
+  "binary": "bin/release/parallel_filter",
+  "workers": [
+    1,
+    2,
+    4,
+    8,
+    15
+  ],
+  "repeats": 7,
+  "warmup": 1,
+  "affinity": "MPI --bind-to none; OMP_PROC_BIND=false; OMP_DYNAMIC=false",
+  "timing": "prepared input to output; includes copies and all filter communication",
+  "stage_note": "Each stage is an independent rank maximum; do not sum them as total",
+  "scope": "single machine; no oversubscription; OS scheduling; background load uncontrolled",
+  "binary_sha256": "4288aef87329e9fe3ba05df0baa7edf6f00771ed903d4a6e9672c6f5d47e93b8",
+  "kernel_sha256": {
+    "src/filter.cpp": "07ea637c318f7d106c20ee11a4aeb504a129ea059dd9817c43c73f91577895eb",
+    "src/pixel.cpp": "8261d91117469d100780adee36209e894b7684591697838d4d1d9eb1b7a51927",
+    "src/execution.cpp": "90d9cf3a7a70c0a5f2e60f7f5f451c1bb29a8e64eb661ebd3d47e8d72bb19269"
+  }
+}

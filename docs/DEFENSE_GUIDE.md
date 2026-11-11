@@ -1,86 +1,88 @@
-# Defense Guide
+# Live demo and defense guide
+
+## Five-minute demo
+
+Run from the repository root. Use release binaries and keep a saved benchmark run available.
+
+```sh
+make -j4 release
+make test
+mkdir -p data
+bin/generate_image data/demo.png --width 1024 --height 1024
+bin/parallel_filter --input data/demo.png --output data/blur.png \
+  --mode openmp --threads 4 --iterations 10 --verify
+mpirun --bind-to none -np 2 bin/parallel_filter \
+  --input data/demo.png --output data/pixel.png --filter pixel \
+  --mode hybrid --threads 2 --block-size 8 --colors 16 --verify
+```
+
+Show input/output images. `make demo` creates a deterministic input and both filtered examples
+under `data/demo/` without external artwork. Optional local Pixelz artwork and saved images
+under `results/demo/` are excluded from version control.
+Then show `results/mac-release/blur/speedup_2048.svg` and the corresponding pixel graph, followed
+by each filter's weak-scaling plot. Use the saved CSV to explain one non-ideal result.
+
+Do not run a full benchmark live unless time permits. A quick measurement uses:
+
+```sh
+bin/parallel_filter --input data/demo.png --filter pixel --mode openmp \
+  --threads 4 --warmup 1 --repeats 7 --verify
+```
 
 ## The 60-second explanation
 
-“My project applies a 3×3 box blur to an RGB image. I wrote one serial reference and three parallel variants. OpenMP shares independent output rows among threads. MPI explicitly divides the image into contiguous horizontal strips. A process owns its strip, but a 3×3 filter also needs one row above and below, so neighboring ranks exchange one halo row before every iteration. The hybrid version uses MPI between row blocks and OpenMP within each block. All variants use the same integer formula, and `--verify` compares every output byte with the serial result. My benchmark measures strong scaling, speedup, efficiency, and weak scaling.”
+“We implemented two RGB filters with serial, OpenMP, MPI, and hybrid execution. Blur is a stencil:
+rank-owned row bands need one neighbor row on each side. Pixel art groups pixels into blocks,
+reduces compact histograms to produce one global palette, and applies ordered dithering independently
+within each owned band. All rounding and tie-breaking are deterministic. We verify byte-identical
+output, then measure the complete in-memory filtering operation including communication. The two
+filters demonstrate different limits: neighbor exchange and memory traffic for blur, versus global
+reduction, palette work, and memory traffic for pixel art.”
 
-## What to point to in the code
+## Where to look
 
-- `src/filter.cpp`, `blur_rows`: the serial loop and OpenMP pragma.
-- `src/main.cpp`, `build_partition`: quotient/remainder row distribution.
-- `src/main.cpp`, `exchange_halo_rows`: the two neighbor exchanges.
-- `src/main.cpp`, `blur_local_rows`: work performed only on owned rows.
-- `src/main.cpp`, `filter_distributed`: scatter → exchange/compute → gather.
-- `src/benchmark.cpp`, `add_metrics`: exact formulas used for graphs.
+- `src/filter.cpp`: separable blur and its exact integer arithmetic.
+- `src/pixel.cpp`: block means, private histograms, deterministic median cut, and expansion.
+- `src/execution.cpp`: explicit partitions, scatter/gather, halo exchange, and palette reduction.
+- `src/reference.cpp` and `scripts/test_integration.py`: independent correctness evidence.
+- `scripts/benchmark.py`: timing records, worker configurations, scaling formulas, environment.
 
-## Five ideas to draw on the board
+## Questions to rehearse
 
-1. Draw an image as horizontal strips labeled rank 0, rank 1, and rank 2.
-2. Add one dashed halo row above and below each strip.
-3. Draw arrows only between adjacent ranks.
-4. Write `S(p) = T_serial / T_parallel(p)`.
-5. Write `E(p) = S(p) / p` and say ideal efficiency is 1 (100%).
+**Why is this data-oriented?** Data ownership and traversal dictate the design: contiguous RGB
+bands, plain configuration, preallocated scratch, thread-private histogram arrays, and separate
+palette channels. There are no objects or heap allocations per pixel.
 
-## Likely questions
+**Why not use separate R/G/B image planes everywhere?** Both kernels consume RGB neighbors together.
+Interleaved RGB also avoids conversion and packing at file/MPI boundaries. Separate arrays are used
+where access patterns benefit, such as palette channels and histogram fields.
 
-### Why is every output pixel safe to compute in parallel?
+**Why does separable blur remain exact?** Horizontal sums retain all precision. We sum three of them
+vertically and divide once by 9; intermediate division would introduce a different result.
 
-Every thread reads from the immutable `current` buffer and writes a different location in the `next` buffer. Buffers are swapped only after the parallel loop ends, which has an implicit OpenMP barrier. There is no write/write race.
+**Why ordered dithering instead of Floyd–Steinberg?** Floyd–Steinberg carries error into later pixels.
+Ordered dithering depends only on the current block, global coordinates, and the shared palette,
+so it is deterministic and independent across bands. This is a deliberate algorithm change from Pixelz.
 
-### Why are halo rows required?
+**Why one palette?** Independent rank palettes create visible seams. Integer histogram reduction
+produces the same global counts/sums regardless of decomposition, and all ranks use the same palette.
 
-The first owned row needs the row immediately above it; the last owned row needs the row immediately below it. Those rows belong to neighboring MPI processes. A filter radius of one therefore requires exactly one halo row on each side.
+**How do you avoid races?** Output regions never overlap. Histograms are private per thread, then
+merged by disjoint fields. Barriers separate read/write stages. Only the initializing thread calls MPI.
 
-### Why use two `MPI_Sendrecv` calls?
+**What happens with uneven images?** Remainder ownership goes to the first ranks. Pixel bands align
+with block rows; right/bottom blocks average only the pixels that actually exist.
 
-Every process must send and receive in both directions. `MPI_Sendrecv` combines one send and one receive and lets MPI avoid the deadlock that a poorly ordered sequence of blocking sends could cause.
+**What happens with too many ranks?** A collective setup check rejects it before processing.
+Malformed files and rank-zero output failures also produce a coordinated nonzero exit.
 
-### What is explicit data ownership?
+**What is timed?** Prepared input to completed output, including data movement and communication.
+Allocation, decoding, process startup, verification, checksums, and encoding are outside every timer.
+Distributed time is the maximum rank duration. Stage maxima cannot be summed into a total.
 
-After `MPI_Scatterv`, a rank owns only its assigned output rows. Halo rows are read-only copies used for boundaries; a rank never computes or writes a neighbor's output rows.
+**What does efficiency mean?** Strong speedup is `T_serial / T_parallel`; efficiency is speedup divided
+by ranks×threads. Weak normalized time is `T_mode(p) / T_mode(1)` at constant pixels per worker.
+Weak efficiency is its reciprocal. Parallel slowdown is a valid measured result.
 
-### What happens when height is not divisible by the number of ranks?
-
-The first `height % ranks` processes receive one extra row. `MPI_Scatterv` and `MPI_Gatherv` accept different counts, so no row is lost or duplicated.
-
-### Why does verification use exact equality rather than a tolerance?
-
-Every implementation sums the same nine 8-bit integers in the same integer type and divides by 9. There is no floating-point reordering, so correct results should match byte for byte.
-
-### Why might parallel execution be slower on a small image?
-
-Thread creation/synchronization, MPI startup, scattering, halo messages, and gathering are fixed overheads. If computation is too small, overhead exceeds the time saved. This is an expected result, not a correctness failure.
-
-### Why does speedup stop improving?
-
-MPI communication grows in importance as strips become thinner. OpenMP eventually reaches memory-bandwidth limits. Serial allocation and synchronization also remain. These are practical examples of communication overhead and Amdahl's law.
-
-### What does strong scaling mean here?
-
-The image and iteration count stay fixed while the number of workers grows. A good result makes elapsed time fall, speedup rise, and efficiency remain reasonably high.
-
-### What does weak scaling mean here?
-
-Image area grows in proportion to worker count, so pixels per worker stay approximately constant. Ideal normalized time remains 1; growth above 1 represents parallel overhead.
-
-### Why is hybrid useful?
-
-On a cluster, one or a few MPI ranks can be used per machine while threads use cores that share memory. This reduces the number of MPI processes and often reduces communication or memory duplication. On one small laptop it is not guaranteed to beat pure OpenMP or pure MPI.
-
-## Live demo order
-
-1. Run `make test`; emphasize four `VERIFY status=PASS` lines and identical checksums.
-2. Generate a 1024×1024 image.
-3. Run serial and hybrid commands from the README with 5–10 iterations.
-4. Show the input and output image in an image viewer.
-5. Open `results/speedup.svg`, `results/efficiency.svg`, and `results/weak_scalability.svg`.
-6. Explain one non-ideal point instead of claiming perfect scaling.
-
-## Safe claims
-
-- “The result is deterministic and verified against the serial implementation.”
-- “MPI ownership is explicit and communication is only between neighbors.”
-- “The reported distributed time includes communication.”
-- “Efficiency below 100% is expected because parallelism has overhead.”
-
-Avoid saying “parallel is always faster,” “hybrid is always best,” or “MPI automatically shares memory.” The measurements should decide which mode is fastest on the tested hardware.
+**Does this demonstrate multiple machines?** No. These runs demonstrate MPI processes on one Mac.
+Multi-node scalability and Linux execution need their own measurements before making those claims.

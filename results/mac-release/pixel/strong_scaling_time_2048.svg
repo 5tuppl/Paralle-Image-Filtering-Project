@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="520" viewBox="0 0 880 520" role="img" aria-label="Pixel · 2048×2048 · time">
+<rect width="100%" height="100%" fill="#fafbfc"/>
+<g font-family="sans-serif" font-size="13" fill="#233044">
+<text x="35" y="32" font-size="21" font-weight="bold">Pixel · 2048×2048 · time</text>
+<text x="35" y="53" fill="#59636e">Median of measured samples; prepared input to completed output</text>
+<path d="M85,425.0 H825" stroke="#dce2e8"/>
+<text x="75" y="429.0" text-anchor="end">0</text>
+<path d="M85,355.0 H825" stroke="#dce2e8"/>
+<text x="75" y="359.0" text-anchor="end">0.00295</text>
+<path d="M85,285.0 H825" stroke="#dce2e8"/>
+<text x="75" y="289.0" text-anchor="end">0.0059</text>
+<path d="M85,214.99999999999997 H825" stroke="#dce2e8"/>
+<text x="75" y="218.99999999999997" text-anchor="end">0.00885</text>
+<path d="M85,145.0 H825" stroke="#dce2e8"/>
+<text x="75" y="149.0" text-anchor="end">0.0118</text>
+<path d="M85,75.0 H825" stroke="#dce2e8"/>
+<text x="75" y="79.0" text-anchor="end">0.0147</text>
+<text x="85.0" y="449" text-anchor="middle">1</text>
+<text x="137.85714285714286" y="449" text-anchor="middle">2</text>
+<text x="243.57142857142858" y="449" text-anchor="middle">4</text>
+<text x="455.0" y="449" text-anchor="middle">8</text>
+<text x="825.0" y="449" text-anchor="middle">15</text>
+<text x="455" y="478" text-anchor="middle">Workers (ranks × threads)</text>
+<text transform="translate(20 270) rotate(-90)" text-anchor="middle">Seconds (whiskers: min–max)</text>
+<polyline points="85.0,281.75637192083155" fill="none" stroke="#59636e" stroke-width="2.5"/>
+<path d="M85.0,286.6925340547724 V274.96914898666284" stroke="#59636e" opacity="0.5"/>
+<circle cx="85.0" cy="281.75637192083155" r="4" fill="#59636e"><title>serial: 0.006036</title></circle>
+<text x="130" y="507" fill="#59636e">serial</text>
+<polyline points="85.0,288.30627936779155 137.85714285714286,343.74317717974276 243.57142857142858,373.28895533722533 455.0,378.6760168968627 825.0,383.5172528359201" fill="none" stroke="#067d68" stroke-width="2.5"/>
+<path d="M85.0,290.4421187526698 V286.0280506905881" stroke="#067d68" opacity="0.5"/>
+<circle cx="85.0" cy="288.30627936779155" r="4" fill="#067d68"><title>openmp: 0.00576</title></circle>
+<path d="M137.85714285714286,349.65233281123926 V337.19326973278277" stroke="#067d68" opacity="0.5"/>
+<circle cx="137.85714285714286" cy="343.74317717974276" r="4" fill="#067d68"><title>openmp: 0.003424</title></circle>
+<path d="M243.57142857142858,379.88632588162704 V366.3118800132897" stroke="#067d68" opacity="0.5"/>
+<circle cx="243.57142857142858" cy="373.28895533722533" r="4" fill="#067d68"><title>openmp: 0.002179</title></circle>
+<path d="M455.0,384.44278323603396 V375.23494233233663" stroke="#067d68" opacity="0.5"/>
+<circle cx="455.0" cy="378.6760168968627" r="4" fill="#067d68"><title>openmp: 0.001952</title></circle>
+<path d="M825.0,385.9141392567279 V370.2038540035123" stroke="#067d68" opacity="0.5"/>
+<circle cx="825.0" cy="383.5172528359201" r="4" fill="#067d68"><title>openmp: 0.001748</title></circle>
+<text x="305" y="507" fill="#067d68">openmp</text>
+<polyline points="85.0,282.7293654183872 137.85714285714286,344.52631828753147 243.57142857142858,365.5999335516636 455.0,372.5058142294366 825.0,284.1295267929185" fill="none" stroke="#a64c19" stroke-width="2.5"/>
+<path d="M85.0,287.85537994209506 V279.88157957188287" stroke="#a64c19" opacity="0.5"/>
+<circle cx="85.0" cy="282.7293654183872" r="4" fill="#a64c19"><title>mpi: 0.005995</title></circle>
+<path d="M137.85714285714286,346.47230528264276 V338.30865252266364" stroke="#a64c19" opacity="0.5"/>
+<circle cx="137.85714285714286" cy="344.52631828753147" r="4" fill="#a64c19"><title>mpi: 0.003391</title></circle>
+<path d="M243.57142857142858,375.28240542977835 V356.03611941715315" stroke="#a64c19" opacity="0.5"/>
+<circle cx="243.57142857142858" cy="365.5999335516636" r="4" fill="#a64c19"><title>mpi: 0.002503</title></circle>
+<path d="M455.0,375.8756941478001 V351.00503108832885" stroke="#a64c19" opacity="0.5"/>
+<circle cx="455.0" cy="372.5058142294366" r="4" fill="#a64c19"><title>mpi: 0.002212</title></circle>
+<path d="M825.0,332.37576534244624 V165.78029332194217" stroke="#a64c19" opacity="0.5"/>
+<circle cx="825.0" cy="284.1295267929185" r="4" fill="#a64c19"><title>mpi: 0.005936</title></circle>
+<text x="480" y="507" fill="#a64c19">mpi</text>
+<polyline points="85.0,285.90939294698376 137.85714285714286,346.30618444159666 243.57142857142858,356.8667236223836 455.0,370.9632635625801 825.0,293.1949784042907" fill="none" stroke="#6355b4" stroke-width="2.5"/>
+<path d="M85.0,290.1098770705777 V279.2408277564194" stroke="#6355b4" opacity="0.5"/>
+<circle cx="85.0" cy="285.90939294698376" r="4" fill="#6355b4"><title>hybrid: 0.005861</title></circle>
+<path d="M137.85714285714286,348.20470833926623 V342.793915230908" stroke="#6355b4" opacity="0.5"/>
+<circle cx="137.85714285714286" cy="346.30618444159666" r="4" fill="#6355b4"><title>hybrid: 0.003316</title></circle>
+<path d="M243.57142857142858,368.9935450187479 V350.76771560112013" stroke="#6355b4" opacity="0.5"/>
+<circle cx="243.57142857142858" cy="356.8667236223836" r="4" fill="#6355b4"><title>hybrid: 0.002871</title></circle>
+<path d="M455.0,377.94033888651575 V363.34543642318096" stroke="#6355b4" opacity="0.5"/>
+<circle cx="455.0" cy="370.9632635625801" r="4" fill="#6355b4"><title>hybrid: 0.002277</title></circle>
+<path d="M825.0,345.54677488252884 V91.66666666666669" stroke="#6355b4" opacity="0.5"/>
+<circle cx="825.0" cy="293.1949784042907" r="4" fill="#6355b4"><title>hybrid: 0.005554</title></circle>
+<text x="655" y="507" fill="#6355b4">hybrid</text>
+</g></svg>

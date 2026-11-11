@@ -1,222 +1,172 @@
 #include "image.h"
+#include <algorithm>
+#include <cassert>
+#include <cctype>
+#include <fstream>
+#include <limits>
+#include <memory>
+#include <stdexcept>
+#include "stb_image.h"
+#include "stb_image_write.h"
 
-#include <ctype.h>
-#include <errno.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-static int read_token(FILE *file, char *token, size_t capacity)
+std::uint64_t image_byte_count(std::uint32_t width, std::uint32_t height)
 {
-    int character;
-    size_t length = 0;
+    if (width == 0 || height == 0) throw std::runtime_error("Image dimensions must be positive");
+    const auto count = static_cast<std::uint64_t>(width) * height;
+    if (count > image_bytes_max / 3) throw std::runtime_error("Image exceeds INT_MAX RGB bytes");
+    assert(count > 0);
+    assert(count * 3 <= image_bytes_max);
+    return count * 3;
+}
 
-    do {
-        character = fgetc(file);
+Image image_create(std::uint32_t width, std::uint32_t height)
+{
+    Image result;
+    result.pixels.resize(image_byte_count(width, height));
+    result.width = width;
+    result.height = height;
+    assert(result.width > 0);
+    assert(result.pixels.size() == image_byte_count(width, height));
+    return result;
+}
+
+static std::string image_extension(const std::string &path)
+{
+    const auto dot = path.find_last_of('.');
+    std::string extension = dot == std::string::npos ? "" : path.substr(dot);
+    for (char &character : extension) {
+        character = static_cast<char>(std::tolower(static_cast<unsigned char>(character)));
+    }
+    return extension;
+}
+
+static std::string ppm_token(std::istream &stream)
+{
+    std::string token;
+    for (std::uint32_t read = 0; read < 65536; ++read) {
+        const int character = stream.peek();
+        if (character == EOF) throw std::runtime_error("Incomplete PPM header");
         if (character == '#') {
-            do {
-                character = fgetc(file);
-            } while (character != '\n' && character != EOF);
+            for (std::uint32_t length = 0; length < 65536; ++length) {
+                const int next = stream.get();
+                if (next == '\n' || next == EOF) break;
+                if (length == 65535) throw std::runtime_error("PPM comment too long");
+            }
+        } else if (std::isspace(character)) {
+            stream.get();
+        } else {
+            break;
         }
-    } while (isspace(character));
-
-    if (character == EOF) {
-        return 0;
+        if (read == 65535) throw std::runtime_error("PPM header too long");
     }
-
-    do {
-        if (length + 1 >= capacity) {
-            return 0;
-        }
-        token[length++] = (char)character;
-        character = fgetc(file);
-    } while (character != EOF && !isspace(character) && character != '#');
-
-    if (character == '#') {
-        do {
-            character = fgetc(file);
-        } while (character != '\n' && character != EOF);
+    for (std::uint32_t length = 0; length < 64; ++length) {
+        const int character = stream.peek();
+        if (character == EOF || std::isspace(character) || character == '#') return token;
+        token.push_back(static_cast<char>(stream.get()));
     }
-
-    token[length] = '\0';
-    return 1;
+    throw std::runtime_error("PPM token too long");
 }
 
-int image_allocate(Image *image, int width, int height, int channels)
+static std::uint32_t ppm_number(const std::string &token)
 {
-    size_t byte_count;
-
-    if (image == NULL || width <= 0 || height <= 0 || channels <= 0) {
-        return 0;
+    if (token.empty()) throw std::runtime_error("Missing PPM dimension");
+    std::uint64_t value = 0;
+    for (const char character : token) {
+        if (character < '0' || character > '9') throw std::runtime_error("Invalid PPM number");
+        value = value * 10 + static_cast<std::uint32_t>(character - '0');
+        if (value > image_bytes_max) throw std::runtime_error("PPM number too large");
     }
-    if ((size_t)width > SIZE_MAX / (size_t)height ||
-        (size_t)width * (size_t)height > SIZE_MAX / (size_t)channels) {
-        return 0;
-    }
-
-    byte_count = (size_t)width * (size_t)height * (size_t)channels;
-    image->pixels = (uint8_t *)malloc(byte_count);
-    if (image->pixels == NULL) {
-        return 0;
-    }
-    image->width = width;
-    image->height = height;
-    image->channels = channels;
-    return 1;
+    return static_cast<std::uint32_t>(value);
 }
 
-void image_free(Image *image)
+static Image image_read_ppm(const std::string &path)
 {
-    if (image == NULL) {
-        return;
+    std::ifstream stream(path, std::ios::binary);
+    if (!stream) throw std::runtime_error("Cannot open input: " + path);
+    if (ppm_token(stream) != "P6") throw std::runtime_error("Expected binary P6 PPM");
+    const auto width = ppm_number(ppm_token(stream));
+    const auto height = ppm_number(ppm_token(stream));
+    if (ppm_token(stream) != "255") throw std::runtime_error("PPM requires maximum 255");
+    const int separator = stream.get();
+    if (separator == EOF || !std::isspace(separator)) {
+        throw std::runtime_error("Missing PPM raster separator");
     }
-    free(image->pixels);
-    image->pixels = NULL;
-    image->width = 0;
-    image->height = 0;
-    image->channels = 0;
+    // Treat CRLF as one header delimiter; do not skip whitespace-valued pixel bytes.
+    if (separator == '\r' && stream.peek() == '\n') stream.get();
+    auto image = image_create(width, height);
+    stream.read(reinterpret_cast<char *>(image.pixels.data()),
+                static_cast<std::streamsize>(image.pixels.size()));
+    if (!stream) throw std::runtime_error("Incomplete PPM raster");
+    return image;
 }
 
-int image_read_ppm(const char *path, Image *image, char *error, size_t error_size)
+Image image_read(const std::string &path)
 {
-    FILE *file = NULL;
-    char token[64];
-    long width;
-    long height;
-    long maximum;
-    size_t byte_count;
-    char *end = NULL;
-    int ok = 0;
-
-    memset(image, 0, sizeof(*image));
-    file = fopen(path, "rb");
-    if (file == NULL) {
-        snprintf(error, error_size, "cannot open '%s': %s", path, strerror(errno));
-        return 0;
+    const auto extension = image_extension(path);
+    if (extension == ".ppm") return image_read_ppm(path);
+    if (extension != ".png" && extension != ".jpg" && extension != ".jpeg") {
+        throw std::runtime_error("Input must be PNG, JPEG, or PPM");
     }
-
-    if (!read_token(file, token, sizeof(token)) || strcmp(token, "P6") != 0) {
-        snprintf(error, error_size, "'%s' is not a binary PPM (P6) file", path);
-        goto cleanup;
+    int width = 0;
+    int height = 0;
+    int channels = 0;
+    if (!stbi_info(path.c_str(), &width, &height, &channels)) {
+        throw std::runtime_error("Cannot inspect input: " + path);
     }
-    if (!read_token(file, token, sizeof(token))) {
-        snprintf(error, error_size, "missing image width");
-        goto cleanup;
+    auto image = image_create(static_cast<std::uint32_t>(width),
+                              static_cast<std::uint32_t>(height));
+    using Decoded = std::unique_ptr<stbi_uc, decltype(&stbi_image_free)>;
+    Decoded decoded(stbi_load(path.c_str(), &width, &height, &channels, 3), stbi_image_free);
+    if (!decoded) throw std::runtime_error("Cannot decode input: " + path);
+    if (static_cast<std::uint32_t>(width) != image.width ||
+        static_cast<std::uint32_t>(height) != image.height) {
+        throw std::runtime_error("Image dimensions changed during decoding");
     }
-    width = strtol(token, &end, 10);
-    if (*end != '\0' || width <= 0 || width > 1000000L) {
-        snprintf(error, error_size, "invalid image width");
-        goto cleanup;
-    }
-    if (!read_token(file, token, sizeof(token))) {
-        snprintf(error, error_size, "missing image height");
-        goto cleanup;
-    }
-    height = strtol(token, &end, 10);
-    if (*end != '\0' || height <= 0 || height > 1000000L) {
-        snprintf(error, error_size, "invalid image height");
-        goto cleanup;
-    }
-    if (!read_token(file, token, sizeof(token))) {
-        snprintf(error, error_size, "missing maximum color value");
-        goto cleanup;
-    }
-    maximum = strtol(token, &end, 10);
-    if (*end != '\0' || maximum != 255) {
-        snprintf(error, error_size, "only 8-bit PPM files (maximum 255) are supported");
-        goto cleanup;
-    }
-
-    if (!image_allocate(image, (int)width, (int)height, 3)) {
-        snprintf(error, error_size, "image is too large or memory allocation failed");
-        goto cleanup;
-    }
-    byte_count = (size_t)width * (size_t)height * 3U;
-    if (fread(image->pixels, 1, byte_count, file) != byte_count) {
-        snprintf(error, error_size, "pixel data in '%s' is incomplete", path);
-        image_free(image);
-        goto cleanup;
-    }
-    ok = 1;
-
-cleanup:
-    fclose(file);
-    return ok;
+    std::copy_n(decoded.get(), image.pixels.size(), image.pixels.data());
+    return image;
 }
 
-int image_write_ppm(const char *path, const Image *image, char *error, size_t error_size)
+void image_write(const std::string &path, const Image &image)
 {
-    FILE *file;
-    size_t byte_count;
-
-    if (image == NULL || image->pixels == NULL || image->channels != 3) {
-        snprintf(error, error_size, "invalid image supplied for writing");
-        return 0;
+    assert(image.width > 0);
+    assert(image.pixels.size() == image_byte_count(image.width, image.height));
+    const auto extension = image_extension(path);
+    if (extension == ".png") {
+        std::ofstream stream(path, std::ios::binary);
+        const auto write_bytes = [](void *context, void *bytes, int count) {
+            auto &target = *static_cast<std::ofstream *>(context);
+            target.write(static_cast<const char *>(bytes), count);
+        };
+        const int encoded = stbi_write_png_to_func(write_bytes, &stream,
+            static_cast<int>(image.width), static_cast<int>(image.height), 3,
+            image.pixels.data(), static_cast<int>(image.width * 3));
+        stream.close();
+        if (!encoded || !stream) throw std::runtime_error("Cannot write PNG: " + path);
+    } else if (extension == ".ppm") {
+        std::ofstream stream(path, std::ios::binary);
+        stream << "P6\n" << image.width << ' ' << image.height << "\n255\n";
+        stream.write(reinterpret_cast<const char *>(image.pixels.data()),
+                     static_cast<std::streamsize>(image.pixels.size()));
+        stream.close();
+        if (!stream) throw std::runtime_error("Cannot write PPM: " + path);
+    } else {
+        throw std::runtime_error("Output must be PNG or PPM");
     }
-    file = fopen(path, "wb");
-    if (file == NULL) {
-        snprintf(error, error_size, "cannot create '%s': %s", path, strerror(errno));
-        return 0;
-    }
-
-    if (fprintf(file, "P6\n%d %d\n255\n", image->width, image->height) < 0) {
-        snprintf(error, error_size, "failed to write PPM header to '%s'", path);
-        fclose(file);
-        return 0;
-    }
-    byte_count = (size_t)image->width * (size_t)image->height * 3U;
-    if (fwrite(image->pixels, 1, byte_count, file) != byte_count) {
-        snprintf(error, error_size, "failed to write all pixels to '%s'", path);
-        fclose(file);
-        return 0;
-    }
-    if (fclose(file) != 0) {
-        snprintf(error, error_size, "failed to close '%s' after writing", path);
-        return 0;
-    }
-    return 1;
 }
 
-uint64_t image_checksum(const Image *image)
+std::uint64_t image_checksum(const Image &image)
 {
-    /* FNV-1a: a small deterministic fingerprint, not a cryptographic hash. */
-    uint64_t hash = UINT64_C(1469598103934665603);
-    const size_t byte_count = (size_t)image->width * (size_t)image->height *
-                              (size_t)image->channels;
-
-    for (size_t index = 0; index < byte_count; ++index) {
-        hash ^= (uint64_t)image->pixels[index];
-        hash *= UINT64_C(1099511628211);
-    }
+    assert(image.width > 0);
+    assert(image.pixels.size() == image_byte_count(image.width, image.height));
+    // Preserve the original project's fingerprint for baseline comparisons.
+    std::uint64_t hash = UINT64_C(1469598103934665603);
+    for (const std::uint8_t value : image.pixels) hash = (hash ^ value) * UINT64_C(1099511628211);
     return hash;
 }
 
-size_t image_difference_count(const Image *a, const Image *b, int *max_difference)
+ImageView image_view(const Image &image)
 {
-    size_t differences = 0;
-    int maximum = 0;
-
-    if (a->width != b->width || a->height != b->height ||
-        a->channels != b->channels) {
-        if (max_difference != NULL) {
-            *max_difference = 255;
-        }
-        return SIZE_MAX;
-    }
-
-    const size_t byte_count = (size_t)a->width * (size_t)a->height *
-                              (size_t)a->channels;
-    for (size_t index = 0; index < byte_count; ++index) {
-        int difference = abs((int)a->pixels[index] - (int)b->pixels[index]);
-        if (difference != 0) {
-            ++differences;
-            if (difference > maximum) {
-                maximum = difference;
-            }
-        }
-    }
-    if (max_difference != NULL) {
-        *max_difference = maximum;
-    }
-    return differences;
+    assert(image.width > 0);
+    assert(image.pixels.size() == image_byte_count(image.width, image.height));
+    return {image.pixels.data(), image.width, image.height};
 }

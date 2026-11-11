@@ -1,21 +1,24 @@
 #ifndef IMAGE_H
 #define IMAGE_H
+#include <cstdint>
+#include <string>
+#include <vector>
 
-#include <stddef.h>
-#include <stdint.h>
-
-typedef struct {
-    int width;
-    int height;
-    int channels;
-    uint8_t *pixels;
-} Image;
-
-int image_read_ppm(const char *path, Image *image, char *error, size_t error_size);
-int image_write_ppm(const char *path, const Image *image, char *error, size_t error_size);
-int image_allocate(Image *image, int width, int height, int channels);
-void image_free(Image *image);
-uint64_t image_checksum(const Image *image);
-size_t image_difference_count(const Image *a, const Image *b, int *max_difference);
-
+constexpr std::uint64_t image_bytes_max = 2147483647;
+struct Image {
+    std::uint32_t width = 0;
+    std::uint32_t height = 0;
+    std::vector<std::uint8_t> pixels;
+};
+struct ImageView {
+    const std::uint8_t *pixels;
+    std::uint32_t width;
+    std::uint32_t height;
+};
+std::uint64_t image_byte_count(std::uint32_t width, std::uint32_t height);
+Image image_create(std::uint32_t width, std::uint32_t height);
+Image image_read(const std::string &path);
+void image_write(const std::string &path, const Image &image);
+std::uint64_t image_checksum(const Image &image);
+ImageView image_view(const Image &image);
 #endif

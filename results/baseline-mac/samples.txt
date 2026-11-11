@@ -1,0 +1,12 @@
+RESULT mode=serial ranks=1 threads=1 workers=1 width=2048 height=2048 iterations=10 seconds=0.290837049 megapixels_per_second=144.215 checksum=4489607905493896450
+RESULT mode=serial ranks=1 threads=1 workers=1 width=2048 height=2048 iterations=10 seconds=0.281934023 megapixels_per_second=148.769 checksum=4489607905493896450
+RESULT mode=serial ranks=1 threads=1 workers=1 width=2048 height=2048 iterations=10 seconds=0.294254065 megapixels_per_second=142.540 checksum=4489607905493896450
+RESULT mode=openmp ranks=1 threads=4 workers=4 width=2048 height=2048 iterations=10 seconds=0.079364061 megapixels_per_second=528.489 checksum=4489607905493896450
+RESULT mode=openmp ranks=1 threads=4 workers=4 width=2048 height=2048 iterations=10 seconds=0.076740980 megapixels_per_second=546.553 checksum=4489607905493896450
+RESULT mode=openmp ranks=1 threads=4 workers=4 width=2048 height=2048 iterations=10 seconds=0.087743044 megapixels_per_second=478.021 checksum=4489607905493896450
+RESULT mode=mpi ranks=2 threads=1 workers=2 width=2048 height=2048 iterations=10 seconds=0.139742000 megapixels_per_second=300.146 checksum=4489607905493896450
+RESULT mode=mpi ranks=2 threads=1 workers=2 width=2048 height=2048 iterations=10 seconds=0.135436000 megapixels_per_second=309.689 checksum=4489607905493896450
+RESULT mode=mpi ranks=2 threads=1 workers=2 width=2048 height=2048 iterations=10 seconds=0.131726000 megapixels_per_second=318.411 checksum=4489607905493896450
+RESULT mode=hybrid ranks=2 threads=2 workers=4 width=2048 height=2048 iterations=10 seconds=0.071262000 megapixels_per_second=588.575 checksum=4489607905493896450
+RESULT mode=hybrid ranks=2 threads=2 workers=4 width=2048 height=2048 iterations=10 seconds=0.070606000 megapixels_per_second=594.044 checksum=4489607905493896450
+RESULT mode=hybrid ranks=2 threads=2 workers=4 width=2048 height=2048 iterations=10 seconds=0.071839000 megapixels_per_second=583.848 checksum=4489607905493896450

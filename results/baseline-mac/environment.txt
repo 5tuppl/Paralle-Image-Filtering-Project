@@ -1,0 +1,2 @@
+macOS-27.0.1-arm64-arm-64bit
+Original implementation; unequal allocation timing scopes; three separate process launches per mode.

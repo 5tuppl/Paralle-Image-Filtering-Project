@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="520" viewBox="0 0 880 520" role="img" aria-label="Blur · 128×128 · efficiency">
+<rect width="100%" height="100%" fill="#fafbfc"/>
+<g font-family="sans-serif" font-size="13" fill="#233044">
+<text x="35" y="32" font-size="21" font-weight="bold">Blur · 128×128 · efficiency</text>
+<text x="35" y="53" fill="#59636e">Median of measured samples; prepared input to completed output</text>
+<path d="M85,425.0 H825" stroke="#dce2e8"/>
+<text x="75" y="429.0" text-anchor="end">0</text>
+<path d="M85,355.0 H825" stroke="#dce2e8"/>
+<text x="75" y="359.0" text-anchor="end">0.266</text>
+<path d="M85,285.0 H825" stroke="#dce2e8"/>
+<text x="75" y="289.0" text-anchor="end">0.532</text>
+<path d="M85,215.0 H825" stroke="#dce2e8"/>
+<text x="75" y="219.0" text-anchor="end">0.798</text>
+<path d="M85,145.0 H825" stroke="#dce2e8"/>
+<text x="75" y="149.0" text-anchor="end">1.06</text>
+<path d="M85,75.0 H825" stroke="#dce2e8"/>
+<text x="75" y="79.0" text-anchor="end">1.33</text>
+<text x="85.0" y="449" text-anchor="middle">1</text>
+<text x="137.85714285714286" y="449" text-anchor="middle">2</text>
+<text x="243.57142857142858" y="449" text-anchor="middle">4</text>
+<text x="455.0" y="449" text-anchor="middle">8</text>
+<text x="825.0" y="449" text-anchor="middle">15</text>
+<text x="455" y="478" text-anchor="middle">Workers (ranks × threads)</text>
+<text transform="translate(20 270) rotate(-90)" text-anchor="middle">Speedup / workers</text>
+<text x="700" y="53" fill="#59636e">Dashed: ideal</text>
+<polyline points="85.0,161.7021276595745 137.85714285714286,161.7021276595745 243.57142857142858,161.7021276595745 455.0,161.7021276595745 825.0,161.7021276595745" fill="none" stroke="#8993a0" stroke-dasharray="5 5"/>
+<polyline points="85.0,161.7021276595745" fill="none" stroke="#59636e" stroke-width="2.5"/>
+<circle cx="85.0" cy="161.7021276595745" r="4" fill="#59636e"><title>serial: 1</title></circle>
+<text x="130" y="507" fill="#59636e">serial</text>
+<polyline points="85.0,112.5 137.85714285714286,331.25 243.57142857142858,321.5301003344482 455.0,400.48534072900156 825.0,415.6036446469248" fill="none" stroke="#067d68" stroke-width="2.5"/>
+<circle cx="85.0" cy="112.5" r="4" fill="#067d68"><title>openmp: 1.18687</title></circle>
+<circle cx="137.85714285714286" cy="331.25" r="4" fill="#067d68"><title>openmp: 0.356061</title></circle>
+<circle cx="243.57142857142858" cy="321.5301003344482" r="4" fill="#067d68"><title>openmp: 0.392977</title></circle>
+<circle cx="455.0" cy="400.48534072900156" r="4" fill="#067d68"><title>openmp: 0.0931062</title></circle>
+<circle cx="825.0" cy="415.6036446469248" r="4" fill="#067d68"><title>openmp: 0.0356872</title></circle>
+<text x="305" y="507" fill="#067d68">openmp</text>
+<polyline points="85.0,123.90510948905114 137.85714285714286,151.21681415929208 243.57142857142858,263.0235602094241 455.0,302.2321428571429 825.0,344.11764705882354" fill="none" stroke="#a64c19" stroke-width="2.5"/>
+<circle cx="85.0" cy="123.90510948905114" r="4" fill="#a64c19"><title>mpi: 1.14355</title></circle>
+<circle cx="137.85714285714286" cy="151.21681415929208" r="4" fill="#a64c19"><title>mpi: 1.03982</title></circle>
+<circle cx="243.57142857142858" cy="263.0235602094241" r="4" fill="#a64c19"><title>mpi: 0.615183</title></circle>
+<circle cx="455.0" cy="302.2321428571429" r="4" fill="#a64c19"><title>mpi: 0.46627</title></circle>
+<circle cx="825.0" cy="344.11764705882354" r="4" fill="#a64c19"><title>mpi: 0.30719</title></circle>
+<text x="480" y="507" fill="#a64c19">mpi</text>
+<polyline points="85.0,129.65393794749406 137.85714285714286,270.3125 243.57142857142858,329.8076923076923 455.0,392.8404365904366 825.0,336.2903225806452" fill="none" stroke="#6355b4" stroke-width="2.5"/>
+<circle cx="85.0" cy="129.65393794749406" r="4" fill="#6355b4"><title>hybrid: 1.12172</title></circle>
+<circle cx="137.85714285714286" cy="270.3125" r="4" fill="#6355b4"><title>hybrid: 0.5875</title></circle>
+<circle cx="243.57142857142858" cy="329.8076923076923" r="4" fill="#6355b4"><title>hybrid: 0.361538</title></circle>
+<circle cx="455.0" cy="392.8404365904366" r="4" fill="#6355b4"><title>hybrid: 0.122141</title></circle>
+<circle cx="825.0" cy="336.2903225806452" r="4" fill="#6355b4"><title>hybrid: 0.336918</title></circle>
+<text x="655" y="507" fill="#6355b4">hybrid</text>
+</g></svg>

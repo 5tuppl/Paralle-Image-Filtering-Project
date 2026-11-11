@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="520" viewBox="0 0 880 520" role="img" aria-label="Blur · 2048×2048 · speedup">
+<rect width="100%" height="100%" fill="#fafbfc"/>
+<g font-family="sans-serif" font-size="13" fill="#233044">
+<text x="35" y="32" font-size="21" font-weight="bold">Blur · 2048×2048 · speedup</text>
+<text x="35" y="53" fill="#59636e">Median of measured samples; prepared input to completed output</text>
+<path d="M85,425.0 H825" stroke="#dce2e8"/>
+<text x="75" y="429.0" text-anchor="end">0</text>
+<path d="M85,355.0 H825" stroke="#dce2e8"/>
+<text x="75" y="359.0" text-anchor="end">3.36</text>
+<path d="M85,285.0 H825" stroke="#dce2e8"/>
+<text x="75" y="289.0" text-anchor="end">6.72</text>
+<path d="M85,214.99999999999997 H825" stroke="#dce2e8"/>
+<text x="75" y="218.99999999999997" text-anchor="end">10.1</text>
+<path d="M85,145.0 H825" stroke="#dce2e8"/>
+<text x="75" y="149.0" text-anchor="end">13.4</text>
+<path d="M85,75.0 H825" stroke="#dce2e8"/>
+<text x="75" y="79.0" text-anchor="end">16.8</text>
+<text x="85.0" y="449" text-anchor="middle">1</text>
+<text x="137.85714285714286" y="449" text-anchor="middle">2</text>
+<text x="243.57142857142858" y="449" text-anchor="middle">4</text>
+<text x="455.0" y="449" text-anchor="middle">8</text>
+<text x="825.0" y="449" text-anchor="middle">15</text>
+<text x="455" y="478" text-anchor="middle">Workers (ranks × threads)</text>
+<text transform="translate(20 270) rotate(-90)" text-anchor="middle">Serial / parallel</text>
+<text x="700" y="53" fill="#59636e">Dashed: ideal</text>
+<polyline points="85.0,404.1666666666667 137.85714285714286,383.3333333333333 243.57142857142858,341.6666666666667 455.0,258.33333333333337 825.0,112.5" fill="none" stroke="#8993a0" stroke-dasharray="5 5"/>
+<polyline points="85.0,404.1666666666667" fill="none" stroke="#59636e" stroke-width="2.5"/>
+<circle cx="85.0" cy="404.1666666666667" r="4" fill="#59636e"><title>serial: 1</title></circle>
+<text x="130" y="507" fill="#59636e">serial</text>
+<polyline points="85.0,404.32499446463225 137.85714285714286,384.3301243867133 243.57142857142858,346.10993079627764 455.0,319.64176083096885 825.0,285.7813150913197" fill="none" stroke="#067d68" stroke-width="2.5"/>
+<circle cx="85.0" cy="404.32499446463225" r="4" fill="#067d68"><title>openmp: 0.9924</title></circle>
+<circle cx="137.85714285714286" cy="384.3301243867133" r="4" fill="#067d68"><title>openmp: 1.95215</title></circle>
+<circle cx="243.57142857142858" cy="346.10993079627764" r="4" fill="#067d68"><title>openmp: 3.78672</title></circle>
+<circle cx="455.0" cy="319.64176083096885" r="4" fill="#067d68"><title>openmp: 5.0572</title></circle>
+<circle cx="825.0" cy="285.7813150913197" r="4" fill="#067d68"><title>openmp: 6.6825</title></circle>
+<text x="305" y="507" fill="#067d68">openmp</text>
+<polyline points="85.0,404.9267678923126 137.85714285714286,384.46021439470843 243.57142857142858,345.97148582381203 455.0,329.66457967358826 825.0,357.41125126403745" fill="none" stroke="#a64c19" stroke-width="2.5"/>
+<circle cx="85.0" cy="404.9267678923126" r="4" fill="#a64c19"><title>mpi: 0.963515</title></circle>
+<circle cx="137.85714285714286" cy="384.46021439470843" r="4" fill="#a64c19"><title>mpi: 1.94591</title></circle>
+<circle cx="243.57142857142858" cy="345.97148582381203" r="4" fill="#a64c19"><title>mpi: 3.79337</title></circle>
+<circle cx="455.0" cy="329.66457967358826" r="4" fill="#a64c19"><title>mpi: 4.5761</title></circle>
+<circle cx="825.0" cy="357.41125126403745" r="4" fill="#a64c19"><title>mpi: 3.24426</title></circle>
+<text x="480" y="507" fill="#a64c19">mpi</text>
+<polyline points="85.0,404.28614536438965 137.85714285714286,384.34340523892763 243.57142857142858,346.43497896560257 455.0,322.4643122436456 825.0,320.8446106654856" fill="none" stroke="#6355b4" stroke-width="2.5"/>
+<circle cx="85.0" cy="404.28614536438965" r="4" fill="#6355b4"><title>hybrid: 0.994265</title></circle>
+<circle cx="137.85714285714286" cy="384.34340523892763" r="4" fill="#6355b4"><title>hybrid: 1.95152</title></circle>
+<circle cx="243.57142857142858" cy="346.43497896560257" r="4" fill="#6355b4"><title>hybrid: 3.77112</title></circle>
+<circle cx="455.0" cy="322.4643122436456" r="4" fill="#6355b4"><title>hybrid: 4.92171</title></circle>
+<circle cx="825.0" cy="320.8446106654856" r="4" fill="#6355b4"><title>hybrid: 4.99946</title></circle>
+<text x="655" y="507" fill="#6355b4">hybrid</text>
+</g></svg>
